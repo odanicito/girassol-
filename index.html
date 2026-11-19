@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flores para o GuiGui</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    background: linear-gradient(180deg, #0b1026 0%, #1b1f4b 55%, #3a2a5e 100%);
+    font-family: 'Dancing Script', cursive;
+    color: #fff;
+  }
+
+  /* estrelas */
+  .star {
+    position: absolute; border-radius: 50%; background: #fff;
+    animation: twinkle var(--t) ease-in-out infinite;
+    opacity: .2;
+  }
+  @keyframes twinkle { 50% { opacity: 1; } }
+
+  /* título */
+  h1 {
+    position: absolute; top: 9vh; left: 0; right: 0;
+    text-align: center; font-size: clamp(2.2rem, 9vw, 4.5rem);
+    text-shadow: 0 0 18px rgba(255, 214, 90, .8), 0 0 40px rgba(255, 140, 180, .5);
+    opacity: 0; transform: translateY(20px);
+    animation: titleIn 2.5s ease 4.6s forwards;
+    z-index: 5; padding: 0 16px;
+  }
+  @keyframes titleIn { to { opacity: 1; transform: none; } }
+
+  /* chão */
+  .ground {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 9vh;
+    background: linear-gradient(180deg, #1f4d2b, #12301b);
+    border-radius: 50% 50% 0 0 / 30% 30% 0 0;
+    z-index: 4;
+  }
+
+  /* jardim */
+  .flower {
+    position: absolute; bottom: 6vh; width: 0;
+    transform-origin: bottom center;
+    animation: sway var(--sw) ease-in-out infinite alternate;
+    z-index: 3;
+  }
+  @keyframes sway { from { transform: rotate(-2.5deg); } to { transform: rotate(2.5deg); } }
+
+  .stem {
+    position: absolute; bottom: 0; left: -3px; width: 6px; height: var(--h);
+    background: linear-gradient(90deg, #2e7d32, #66bb6a);
+    border-radius: 3px; transform-origin: bottom; transform: scaleY(0);
+    animation: grow 2.2s cubic-bezier(.3, .8, .3, 1) var(--d) forwards;
+  }
+  @keyframes grow { to { transform: scaleY(1); } }
+
+  .leaf {
+    position: absolute; width: 28px; height: 14px; background: #43a047;
+    border-radius: 0 100% 0 100%; opacity: 0; transform: scale(0);
+    animation: pop 1s ease forwards;
+    animation-delay: calc(var(--d) + 1.4s);
+  }
+  .leaf.l { left: -30px; transform-origin: right bottom; transform: scale(0) scaleX(-1); }
+  .leaf.r { left: 3px; transform-origin: left bottom; }
+  .leaf.l { animation-name: popL; }
+  @keyframes pop  { to { opacity: 1; transform: scale(1); } }
+  @keyframes popL { to { opacity: 1; transform: scale(1) scaleX(-1); } }
+
+  .head {
+    position: absolute; top: 0; left: 0;
+    width: var(--s); height: var(--s);
+    margin-left: calc(var(--s) / -2);
+    margin-top: calc(var(--s) * var(--ty));
+    transform: scale(0) rotate(-90deg);
+    animation: bloom 1.6s cubic-bezier(.2, 1.4, .4, 1) calc(var(--d) + 2s) forwards;
+    filter: drop-shadow(0 0 10px rgba(255, 220, 120, .35));
+  }
+  @keyframes bloom { to { transform: scale(1) rotate(0); } }
+
+  /* pétalas caindo */
+  .petal {
+    position: absolute; top: -20px; z-index: 6; pointer-events: none;
+    border-radius: 150% 0 150% 0; opacity: .85;
+    animation: fall var(--f) linear forwards;
+  }
+  @keyframes fall {
+    to { transform: translate(var(--dx), 110vh) rotate(var(--r)); opacity: .2; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Flores para o GuiGui</h1>
+<div class="ground"></div>
+
+<script>
+  /* estrelas */
+  for (let i = 0; i < 70; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 1;
+    s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*60}%;--t:${2 + Math.random()*4}s;animation-delay:${Math.random()*4}s`;
+    document.body.appendChild(s);
+  }
+
+  /* desenhos */
+  function sunflower() {
+    let p = '';
+    for (let i = 0; i < 18; i++) p += `<ellipse cx="0" cy="-33" rx="9" ry="18" fill="#FFC107" transform="rotate(${i*20})"/>`;
+    for (let i = 0; i < 18; i++) p += `<ellipse cx="0" cy="-27" rx="7" ry="14" fill="#FFB300" transform="rotate(${i*20+10})"/>`;
+    let seeds = '';
+    for (let i = 0; i < 28; i++) {
+      const a = i * 2.4, r = 3.2 * Math.sqrt(i);
+      seeds += `<circle cx="${(Math.cos(a)*r).toFixed(1)}" cy="${(Math.sin(a)*r).toFixed(1)}" r="1.4" fill="#6d4c2a"/>`;
+    }
+    return `<svg viewBox="-55 -55 110 110">${p}<circle r="20" fill="#4e2f14"/><circle r="15" fill="#3b2310"/>${seeds}</svg>`;
+  }
+
+  function tulip(c1, c2) {
+    return `<svg viewBox="-30 -48 60 60">
+      <path d="M-22,-10 C-25,-36 -14,-41 -10,-46 L0,-30 L10,-46 C14,-41 25,-36 22,-10 C20,10 -20,10 -22,-10 Z" fill="${c1}"/>
+      <path d="M-12,-6 C-14,-30 -4,-38 0,-44 C4,-38 14,-30 12,-6 C10,8 -10,8 -12,-6 Z" fill="${c2}"/>
+    </svg>`;
+  }
+
+  /* jardim: t = tipo, x = posição (%), h = altura do caule (vh), d = atraso (s) */
+  const pink = ['#e91e63', '#ff80ab'], red = ['#d32f2f', '#ff6f60'], purple = ['#7b1fa2', '#ba68c8'], yellowT = ['#f9a825', '#ffe082'];
+  const garden = [
+    { t: 's', x: 9,  h: 44, d: 0.2 },
+    { t: 't', x: 18, h: 30, d: 0.6, c: pink },
+    { t: 's', x: 28, h: 52, d: 0.0 },
+    { t: 't', x: 37, h: 34, d: 0.9, c: red },
+    { t: 's', x: 50, h: 58, d: 0.4 },
+    { t: 't', x: 62, h: 32, d: 0.7, c: purple },
+    { t: 's', x: 72, h: 50, d: 0.1 },
+    { t: 't', x: 82, h: 36, d: 1.0, c: yellowT },
+    { t: 's', x: 91, h: 42, d: 0.5 },
+    { t: 't', x: 4,  h: 24, d: 1.2, c: pink },
+    { t: 't', x: 96, h: 26, d: 1.1, c: red }
+  ];
+
+  garden.forEach(f => {
+    const el = document.createElement('div');
+    el.className = 'flower';
+    const isS = f.t === 's';
+    const size = isS ? 'clamp(64px, 17vmin, 150px)' : 'clamp(36px, 9vmin, 80px)';
+    el.style.cssText = `left:${f.x}%;--h:${f.h}vh;--d:${f.d}s;--s:${size};--ty:${isS ? -0.5 : -0.78};--sw:${3 + Math.random()*2}s`;
+    el.innerHTML = `
+      <div class="stem"></div>
+      <div class="leaf r" style="bottom:calc(var(--h) * .3)"></div>
+      <div class="leaf l" style="bottom:calc(var(--h) * .45)"></div>
+      <div class="head" style="top:calc(100% - var(--h))">${isS ? sunflower() : tulip(...f.c)}</div>`;
+    document.body.appendChild(el);
+  });
+
+  /* pétalas caindo */
+  const colors = ['#FFC107', '#ff80ab', '#ffe082', '#f48fb1', '#ba68c8'];
+  setTimeout(() => setInterval(() => {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    const w = 8 + Math.random() * 8;
+    p.style.cssText = `left:${Math.random()*100}%;width:${w}px;height:${w}px;background:${colors[Math.floor(Math.random()*colors.length)]};--f:${7 + Math.random()*6}s;--dx:${(Math.random()-0.5)*160}px;--r:${Math.random()*720}deg`;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 14000);
+  }, 450), 5000);
+</script>
+</body>
+</html>
